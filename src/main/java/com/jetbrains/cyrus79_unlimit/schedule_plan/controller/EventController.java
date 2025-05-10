@@ -1,0 +1,43 @@
+package com.jetbrains.cyrus79_unlimit.schedule_plan.controller;
+
+import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.Event;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.service.EventService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/events")
+public class EventController {
+    @Autowired
+    private EventService eventService;
+
+    // Create Event
+    @PostMapping
+    public ResponseEntity<Event> createEvent(@RequestBody Event event) {
+        return ResponseEntity.ok(eventService.createEvent(event));
+    }
+
+    // Get Events by User ID
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Event>> getEventsByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(eventService.getEventsByUserId(userId));
+    }
+
+    // Get Event by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Event> getEventById(@PathVariable Long id) {
+        return eventService.getEventById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Delete Event
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
+        eventService.deleteEvent(id);
+        return ResponseEntity.noContent().build();
+    }
+}

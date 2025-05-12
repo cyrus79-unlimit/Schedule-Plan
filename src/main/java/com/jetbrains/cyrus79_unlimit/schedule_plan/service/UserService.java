@@ -3,6 +3,9 @@ package com.jetbrains.cyrus79_unlimit.schedule_plan.service;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.User;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -29,13 +32,26 @@ public class UserService {
         return userRepository.findByUsernameAndPassword(username, password);
     }
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
     // Update user info (name, birthday, etc.)
     public User updateUserInfo(Long id, User updatedUser) {
         return userRepository.findById(id).map(user -> {
             user.setName(updatedUser.getName());
             user.setBirthday(updatedUser.getBirthday());
             user.setEmail(updatedUser.getEmail());
-            // Add other fields as needed
+
+            if (updatedUser.getUsername() != null && !updatedUser.getUsername().isBlank()) {
+                user.setUsername(updatedUser.getUsername());
+            }
+
+            if (updatedUser.getPassword() != null && !updatedUser.getPassword().isBlank()) {
+                user.setPassword(passwordEncoder().encode(updatedUser.getPassword()));
+            }
+
             return userRepository.save(user);
         }).orElseThrow(() -> new RuntimeException("User not found"));
     }

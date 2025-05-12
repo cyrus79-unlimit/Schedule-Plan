@@ -1,6 +1,7 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.controller;
 
 import com.jetbrains.cyrus79_unlimit.schedule_plan.config.ChangePasswordRequest;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.config.JwtUntil;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.config.LoginRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.User;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.service.UserService;
@@ -9,6 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -16,6 +20,10 @@ import java.util.Optional;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JwtUntil jwtUntil;
+
 
     // Register new user
     @PostMapping("/register")
@@ -28,7 +36,14 @@ public class UserController {
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
         Optional<User> user = userService.authenticate(loginRequest.getUsername(), loginRequest.getPassword());
         if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
+            String token = jwtUntil.generateToken(user.get().getUsername());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
+            response.put("username", user.get().getUsername());
+            response.put("message", "Login successful");
+
+            return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }

@@ -1,9 +1,15 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.service;
 
+import com.jetbrains.cyrus79_unlimit.schedule_plan.config.CustomUserDetails;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.UpdateUserRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.User;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.CustomAutowireConfigurer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,7 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
@@ -37,23 +43,46 @@ public class UserService {
         return new BCryptPasswordEncoder();
     }
 
-    // Update user info (name, birthday, etc.)
-    public User updateUserInfo(Long id, User updatedUser) {
-        return userRepository.findById(id).map(user -> {
-            user.setName(updatedUser.getName());
-            user.setBirthday(updatedUser.getBirthday());
-            user.setEmail(updatedUser.getEmail());
+//    // Update user info (name, birthday, etc.)
+//    public User updateUserInfo(Long id, User updatedUser) {
+//        return userRepository.findById(id).map(user -> {
+//            user.setName(updatedUser.getName());
+//            user.setBirthday(updatedUser.getBirthday());
+//            user.setEmail(updatedUser.getEmail());
+//
+//            if (updatedUser.getUsername() != null && !updatedUser.getUsername().isBlank()) {
+//                user.setUsername(updatedUser.getUsername());
+//            }
+//
+//            if (updatedUser.getPassword() != null && !updatedUser.getPassword().isBlank()) {
+//                user.setPassword(passwordEncoder().encode(updatedUser.getPassword()));
+//            }
+//
+//            return userRepository.save(user);
+//        }).orElseThrow(() -> new RuntimeException("User not found"));
+//    }
 
-            if (updatedUser.getUsername() != null && !updatedUser.getUsername().isBlank()) {
-                user.setUsername(updatedUser.getUsername());
-            }
+    //Update current user
+    public User updateCurrentUser(String username, UpdateUserRequest request) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-            if (updatedUser.getPassword() != null && !updatedUser.getPassword().isBlank()) {
-                user.setPassword(passwordEncoder().encode(updatedUser.getPassword()));
-            }
-
-            return userRepository.save(user);
-        }).orElseThrow(() -> new RuntimeException("User not found"));
+        // Update only allowed fields
+//        user.setName(updatedData.getName());
+//        user.setBirthday(updatedData.getBirthday());
+//        user.setEmail(updatedData.getEmail());
+//
+//        if (updatedData.getUsername() != null && !updatedData.getUsername().isBlank()) {
+//            user.setUsername(updatedData.getUsername());
+//        }
+//
+//        if (updatedData.getPassword() != null && !updatedData.getPassword().isBlank()) {
+//            user.setPassword(passwordEncoder().encode(updatedData.getPassword()));
+//        }
+        if (request.getName() != null) user.setName(request.getName());
+        if (request.getEmail() != null) user.setEmail(request.getEmail());
+        if (request.getBirthday() != null) user.setBirthday(request.getBirthday());
+        return userRepository.save(user);
     }
 
     // Change password
@@ -66,5 +95,12 @@ public class UserService {
             }
             return false;
         }).orElse(false);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username)
+                .map(CustomUserDetails::new)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
     }
 }

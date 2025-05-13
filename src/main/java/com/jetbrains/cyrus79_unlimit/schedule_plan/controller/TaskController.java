@@ -2,6 +2,7 @@ package com.jetbrains.cyrus79_unlimit.schedule_plan.controller;
 
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.Task;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.service.TaskService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tasks")
+@SecurityRequirement(name = "bearerAuth")
 public class TaskController {
     @Autowired
     private TaskService taskService;

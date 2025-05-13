@@ -6,6 +6,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -39,17 +40,22 @@ public class JwtUntil {
                 .getSubject();
     }
 
-    public Claims validateToken(String token) {
+    public boolean validateToken(String token, UserDetails userDetails) {
         try {
-            Jwt<?, ?> parsedJwt = Jwts.parser()  // new simpler static parser
-                    .verifyWith(getSigningKey()) // directly verifies the signature
-                    .build()
-                    .parse(token);
-
-            return (Claims) parsedJwt.getPayload();
-        } catch (JwtException e) {
-            // Token is invalid (expired, malformed, etc.)
-            throw new RuntimeException("Invalid or expired JWT", e);
+            String username = getUsernameFromToken(token);
+            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        } catch (Exception e) {
+            return false;
         }
+    }
+
+    private boolean isTokenExpired(String token) {
+        Date expiration = Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration();
+        return expiration.before(new Date());
     }
 }

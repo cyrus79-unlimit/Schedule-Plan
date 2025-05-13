@@ -1,53 +1,28 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.controller;
 
 import com.jetbrains.cyrus79_unlimit.schedule_plan.config.ChangePasswordRequest;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.config.CustomUserDetails;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.config.JwtUntil;
-import com.jetbrains.cyrus79_unlimit.schedule_plan.config.LoginRequest;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.UpdateUserRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.User;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
+@SecurityRequirement(name = "bearerAuth")
 public class UserController {
     @Autowired
     private UserService userService;
 
     @Autowired
     private JwtUntil jwtUntil;
-
-
-    // Register new user
-    @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.registerUser(user));
-    }
-
-    // Login user
-    @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
-        Optional<User> user = userService.authenticate(loginRequest.getUsername(), loginRequest.getPassword());
-        if (user.isPresent()) {
-            String token = jwtUntil.generateToken(user.get().getUsername());
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("token", token);
-            response.put("username", user.get().getUsername());
-            response.put("message", "Login successful");
-
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-        }
-    }
 
     // Get user by ID
     @GetMapping("/{id}")
@@ -58,9 +33,17 @@ public class UserController {
     }
 
     // Update user info (name, birthday, etc.)
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
-        return ResponseEntity.ok(userService.updateUserInfo(id, updatedUser));
+//    @PutMapping("/{id}")
+//    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+//        return ResponseEntity.ok(userService.updateUserInfo(id, updatedUser));
+//    }
+
+    //Update user info (token extract data)
+    @PutMapping("update")
+    public ResponseEntity<User> updateUser(@RequestBody UpdateUserRequest request) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+//        User currentUser = userService.updateCurrentUser(username, updatedData);
+        return ResponseEntity.ok(userService.updateCurrentUser(username,request));
     }
 
     // Change password

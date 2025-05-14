@@ -2,6 +2,7 @@ package com.jetbrains.cyrus79_unlimit.schedule_plan.controller;
 
 import com.jetbrains.cyrus79_unlimit.schedule_plan.config.JwtUntil;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.LoginRequest;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.RegisterRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.User;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class AuthController {
 
     // Register new user
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
+    public ResponseEntity<User> registerUser(@RequestBody RegisterRequest user) {
         return ResponseEntity.ok(userService.registerUser(user));
     }
 
@@ -36,11 +37,15 @@ public class AuthController {
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
         Optional<User> user = userService.authenticate(loginRequest.getUsername(), loginRequest.getPassword());
         if (user.isPresent()) {
-            String token = jwtUntil.generateToken(user.get().getUsername());
+            String token = jwtUntil.generateToken(
+                    user.get().getUsername(),
+                    user.get().getRole()
+            );
 
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
             response.put("username", user.get().getUsername());
+            response.put("role", user.get().getRole());
             response.put("message", "Login successful");
 
             return ResponseEntity.ok(response);

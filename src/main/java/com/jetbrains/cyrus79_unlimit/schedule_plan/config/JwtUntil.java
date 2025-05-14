@@ -21,10 +21,11 @@ public class JwtUntil {
     }
 
     //Token generation
-    public String generateToken(String username) {
+    public String generateToken(String username,String role) {
         long jwtExpirationMs = 86400000;
         return Jwts.builder()
                 .subject(username)
+                .claim("role", role)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(getSigningKey())
@@ -38,6 +39,15 @@ public class JwtUntil {
                 .parseSignedClaims(token)
                 .getPayload()
                 .getSubject();
+    }
+
+    public String getRoleFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        return claims.get("role", String.class);
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {

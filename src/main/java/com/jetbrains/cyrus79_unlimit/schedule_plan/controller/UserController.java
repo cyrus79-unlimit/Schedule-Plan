@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ public class UserController {
     private JwtUntil jwtUntil;
 
     // Get user by ID
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return userService.getUserById(id)
@@ -32,17 +34,10 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Update user info (name, birthday, etc.)
-//    @PutMapping("/{id}")
-//    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
-//        return ResponseEntity.ok(userService.updateUserInfo(id, updatedUser));
-//    }
-
     //Update user info (token extract data)
     @PutMapping("update")
     public ResponseEntity<User> updateUser(@RequestBody UpdateUserRequest request) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-//        User currentUser = userService.updateCurrentUser(username, updatedData);
         return ResponseEntity.ok(userService.updateCurrentUser(username,request));
     }
 

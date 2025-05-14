@@ -1,10 +1,15 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.controller;
 
+import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.CreateTaskRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.Task;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.User;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.service.TaskService;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,19 +21,27 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
+    @Autowired
+    private UserService userService;
+
     // Create Task
     @PostMapping
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
-        return ResponseEntity.ok(taskService.createTask(task));
+    public ResponseEntity<Task> createTask(@RequestBody CreateTaskRequest createTaskRequest) {
+        // Set the authenticated user
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Task createdTask = taskService.createTask(createTaskRequest,username);
+        return ResponseEntity.ok(createdTask);
     }
 
     // Get Tasks by User ID
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Task>> getTasksByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(taskService.getTasksByUserId(userId));
     }
 
     // Get Task by ID
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
         return taskService.getTaskById(id)

@@ -2,11 +2,11 @@ package com.jetbrains.cyrus79_unlimit.schedule_plan.controller;
 
 import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.CreateTaskRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.Task;
-import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.User;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.service.TaskService;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,16 +17,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tasks")
 @SecurityRequirement(name = "bearerAuth")
+@RequiredArgsConstructor
 public class TaskController {
-    @Autowired
-    private TaskService taskService;
+    private final TaskService taskService;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     // Create Task
     @PostMapping
-    public ResponseEntity<Task> createTask(@RequestBody CreateTaskRequest createTaskRequest) {
+    public ResponseEntity<Task> createTask(@Valid @RequestBody CreateTaskRequest createTaskRequest) {
         // Set the authenticated user
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Task createdTask = taskService.createTask(createTaskRequest,username);

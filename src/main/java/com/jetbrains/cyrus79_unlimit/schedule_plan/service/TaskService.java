@@ -4,6 +4,8 @@ import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.CreateTaskRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.Task;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.User;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.repository.TaskRepository;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +13,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class TaskService {
-    @Autowired
-    private TaskRepository taskRepository;
+    private final TaskRepository taskRepository;
 
     @Autowired
     private UserService userService;

@@ -1,9 +1,11 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.service;
 
+import com.jetbrains.cyrus79_unlimit.schedule_plan.config.BadRequestException;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.CreateEventRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.Event;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.User;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.repository.EventRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,12 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class EventService {
-    @Autowired
-    private EventRepository eventRepository;
+    private final EventRepository eventRepository;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     public Event createEvent(CreateEventRequest createEventRequest,String username) {
         User user = userService.findByUsername(username);
@@ -28,6 +29,13 @@ public class EventService {
         newEvent.setIcon(createEventRequest.getIcon());
         newEvent.setStartTime(createEventRequest.getStartTime());
         newEvent.setEndTime(createEventRequest.getEndTime());
+
+        if (createEventRequest.getStartTime().isAfter(createEventRequest.getEndTime())) {
+            throw new BadRequestException("Start time cannot be after end time");
+        }
+
+        // Assign the user to the event
+        newEvent.setUser(user);
         return eventRepository.save(newEvent);
     }
 

@@ -1,29 +1,26 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.controller;
 
 import com.jetbrains.cyrus79_unlimit.schedule_plan.config.ChangePasswordRequest;
-import com.jetbrains.cyrus79_unlimit.schedule_plan.config.CustomUserDetails;
-import com.jetbrains.cyrus79_unlimit.schedule_plan.config.JwtUntil;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.config.JwtUtil;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.UpdateUserRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.User;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
 @SecurityRequirement(name = "bearerAuth")
+@RequiredArgsConstructor
 public class UserController {
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private JwtUntil jwtUntil;
+    private final UserService userService;
+    private final JwtUtil jwtUtil;
 
     // Get user by ID
     @PreAuthorize("hasRole('ADMIN')")
@@ -36,7 +33,7 @@ public class UserController {
 
     //Update user info (token extract data)
     @PutMapping("update")
-    public ResponseEntity<User> updateUser(@RequestBody UpdateUserRequest request) {
+    public ResponseEntity<User> updateUser(@Valid @RequestBody UpdateUserRequest request) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return ResponseEntity.ok(userService.updateCurrentUser(username,request));
     }

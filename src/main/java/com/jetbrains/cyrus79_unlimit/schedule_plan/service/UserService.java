@@ -1,10 +1,13 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.service;
 
+import com.jetbrains.cyrus79_unlimit.schedule_plan.config.BadRequestException;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.config.CustomUserDetails;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.RegisterRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.UpdateUserRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.User;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.repository.UserRepository;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.CustomAutowireConfigurer;
 import org.springframework.context.annotation.Bean;
@@ -18,17 +21,30 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    // Authenticate user with username and password
+    public Optional<User> authenticate(String username, String password) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            if(passwordEncoder.matches(password, user.getPassword())) {
+                return Optional.of(user);
+            }
+        }
+        return Optional.empty();
+    }
 
     public User registerUser(RegisterRequest registerRequest) {
         if (!registerRequest.getPassword().equals(registerRequest.getRepeatPassword())) {
-            throw new IllegalArgumentException("Password do not match.");
+            throw new BadRequestException("Password do not match.");
         }
         User user = new User();
         user.setUsername(registerRequest.getUsername());
-        user.setPassword(passwordEncoder().encode(registerRequest.getPassword()));
+        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setName(registerRequest.getName());
         user.setEmail(registerRequest.getEmail());
         user.setBirthday(registerRequest.getBirthday());
@@ -47,16 +63,6 @@ public class UserService implements UserDetailsService {
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
-    }
-
-    // Authenticate user with username and password
-    public Optional<User> authenticate(String username, String password) {
-        return userRepository.findByUsernameAndPassword(username, password);
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     //Update current user

@@ -1,10 +1,7 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.config;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwt;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -13,7 +10,7 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
-public class JwtUntil {
+public class JwtUtil {
 
     private SecretKey getSigningKey() {
         String jwtSecret = "schedule_plan_project_secret_key";

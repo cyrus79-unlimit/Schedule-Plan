@@ -4,7 +4,8 @@ import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.CreateEventRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.Event;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.service.EventService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -14,13 +15,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/events")
 @SecurityRequirement(name = "bearerAuth")
+@RequiredArgsConstructor
 public class EventController {
-    @Autowired
-    private EventService eventService;
+
+    private final EventService eventService;
 
     // Create Event
     @PostMapping
-    public ResponseEntity<Event> createEvent(@RequestBody CreateEventRequest createEventRequest) {
+    public ResponseEntity<Event> createEvent(@Valid @RequestBody CreateEventRequest createEventRequest) {
         // Set the authenticated user
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Event createdEven = eventService.createEvent(createEventRequest,username);

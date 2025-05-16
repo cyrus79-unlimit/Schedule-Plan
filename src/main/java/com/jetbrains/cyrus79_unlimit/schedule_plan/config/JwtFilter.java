@@ -1,12 +1,10 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.config;
 
-import com.jetbrains.cyrus79_unlimit.schedule_plan.service.UserService;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,12 +18,12 @@ import java.io.IOException;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
-    @Autowired
-    private JwtUntil jwtUntil;
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+    private final JwtUtil jwtUtil;
+
+    private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -35,7 +33,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if(autHeader != null && autHeader.startsWith("Bearer ")) {
             String token = autHeader.substring(7);
-            String username = jwtUntil.getUsernameFromToken(token);
+            String username = jwtUtil.getUsernameFromToken(token);
 //
             if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 System.out.println("Username from Token: " + username);
@@ -44,9 +42,9 @@ public class JwtFilter extends OncePerRequestFilter {
                 System.out.println("UserDetail found : " + userDetails.getUsername());
 
 
-                if (jwtUntil.validateToken(token, userDetails)) {
+                if (jwtUtil.validateToken(token, userDetails)) {
                     // Get role from token
-                    String role = jwtUntil.getRoleFromToken(token);
+                    String role = jwtUtil.getRoleFromToken(token);
                     System.out.println("Extracted Role: " + role);
 
                     // Add role prefix: Spring Security expects "ROLE_"

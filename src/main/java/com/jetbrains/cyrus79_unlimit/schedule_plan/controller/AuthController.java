@@ -1,11 +1,12 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.controller;
 
-import com.jetbrains.cyrus79_unlimit.schedule_plan.config.JwtUntil;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.config.JwtUtil;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.LoginRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.RegisterRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.User;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,16 +20,15 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private JwtUntil jwtUntil;
+    private final JwtUtil jwtUtil;
 
     // Register new user
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody RegisterRequest user) {
+    public ResponseEntity<User> registerUser(@Valid @RequestBody RegisterRequest user) {
         return ResponseEntity.ok(userService.registerUser(user));
     }
 
@@ -37,7 +37,7 @@ public class AuthController {
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
         Optional<User> user = userService.authenticate(loginRequest.getUsername(), loginRequest.getPassword());
         if (user.isPresent()) {
-            String token = jwtUntil.generateToken(
+            String token = jwtUtil.generateToken(
                     user.get().getUsername(),
                     user.get().getRole()
             );

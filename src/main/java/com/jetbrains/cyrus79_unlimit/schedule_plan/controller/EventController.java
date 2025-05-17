@@ -1,12 +1,16 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.controller;
 
+import com.jetbrains.cyrus79_unlimit.schedule_plan.config.CustomUserDetails;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.CreateEventRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.Event;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.service.EventService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,19 +24,21 @@ public class EventController {
 
     private final EventService eventService;
 
-    // Create Event
     @PostMapping
-    public ResponseEntity<Event> createEvent(@Valid @RequestBody CreateEventRequest createEventRequest) {
+    public ResponseEntity<List<Event>> createEvent(@RequestBody @Valid CreateEventRequest request) {
         // Set the authenticated user
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Event createdEven = eventService.createEvent(createEventRequest,username);
-        return ResponseEntity.ok(createdEven);
+        List<Event> createdEvents = eventService.createEvent(request, username);
+        return ResponseEntity.ok(createdEvents);
     }
 
-    // Get Events by User ID
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Event>> getEventsByUserId(@PathVariable Long userId) {
-        return ResponseEntity.ok(eventService.getEventsByUserId(userId));
+    // Get User's Events
+    @GetMapping("/my-events")
+    public Page<Event> getMyEvents(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return eventService.getUserEvents(userDetails.getUsername(), PageRequest.of(page,size));
     }
 
     // Get Event by ID

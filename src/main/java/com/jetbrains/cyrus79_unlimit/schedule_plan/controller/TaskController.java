@@ -1,5 +1,6 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.controller;
 
+import com.jetbrains.cyrus79_unlimit.schedule_plan.config.CustomUserDetails;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.CreateTaskRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.Task;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.service.TaskService;
@@ -7,8 +8,11 @@ import com.jetbrains.cyrus79_unlimit.schedule_plan.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,11 +36,14 @@ public class TaskController {
         return ResponseEntity.ok(createdTask);
     }
 
-    // Get Tasks by User ID
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Task>> getTasksByUserId(@PathVariable Long userId) {
-        return ResponseEntity.ok(taskService.getTasksByUserId(userId));
+    // Get User's Tasks
+    @GetMapping("/my-tasks")
+    public Page<Task> getMyTasks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) Boolean completed,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return taskService.getUserTasks(userDetails.getUsername(),completed, PageRequest.of(page,size));
     }
 
     // Get Task by ID

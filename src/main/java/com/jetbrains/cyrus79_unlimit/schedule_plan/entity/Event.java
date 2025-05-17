@@ -1,5 +1,6 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.entity;
 
+import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.CreateEventRequest;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -28,67 +29,6 @@ public class Event {
 
     private String icon;
 
-    public Long getEventId() {
-        return eventId;
-    }
-
-    public void setEventId(Long eventId) {
-        this.eventId = eventId;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
+    @Enumerated(EnumType.STRING)
+    private CreateEventRequest.RecurrenceType recurrence;
 }

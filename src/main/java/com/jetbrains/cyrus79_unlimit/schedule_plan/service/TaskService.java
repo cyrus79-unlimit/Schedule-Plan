@@ -7,6 +7,9 @@ import com.jetbrains.cyrus79_unlimit.schedule_plan.repository.TaskRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,8 +36,14 @@ public class TaskService {
         return taskRepository.save(newTask);
     }
 
-    public List<Task> getTasksByUserId(Long userId) {
-        return taskRepository.findAllByUserId(userId);
+    public Page<Task> getUserTasks(String username, Boolean completed, Pageable pageable) {
+        User user = userService.findByUsername(username);
+
+        if (completed == null) {
+            return taskRepository.findAllByUser_Id(user.getId(),pageable);
+        } else {
+            return taskRepository.findTaskByUserIdAndCompleted(user.getId(),completed,pageable);
+        }
     }
 
     public Optional<Task> getTaskById(Long id) {

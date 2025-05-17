@@ -28,4 +28,13 @@ public class CreateEventRequest {
     @NotNull(message = "End time is required")
     @Future(message = "End time must be in the future")
     private LocalDateTime endTime;
+
+    public enum RecurrenceType {
+        NONE,
+        DAILY,
+        WEEKLY,
+        MONTHLY
+    }
+
+    private RecurrenceType recurrence = RecurrenceType.NONE;
 }

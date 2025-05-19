@@ -1,4 +1,4 @@
-package com.jetbrains.cyrus79_unlimit.schedule_plan.config;
+package com.jetbrains.cyrus79_unlimit.schedule_plan.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

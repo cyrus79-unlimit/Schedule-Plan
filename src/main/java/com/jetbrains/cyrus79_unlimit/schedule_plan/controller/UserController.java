@@ -1,8 +1,8 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.controller;
 
-import com.jetbrains.cyrus79_unlimit.schedule_plan.config.ChangePasswordRequest;
-import com.jetbrains.cyrus79_unlimit.schedule_plan.config.JwtUtil;
-import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.UpdateUserRequest;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.request.ChangePasswordRequest;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.security.JwtUtil;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.request.UpdateUserRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.User;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

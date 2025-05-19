@@ -1,7 +1,7 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.controller;
 
-import com.jetbrains.cyrus79_unlimit.schedule_plan.config.CustomUserDetails;
-import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.CreateTaskRequest;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.security.CustomUserDetails;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.request.CreateTaskRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.Task;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.service.TaskService;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.service.UserService;
@@ -15,8 +15,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/tasks")

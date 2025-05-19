@@ -1,6 +1,6 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.entity;
 
-import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.CreateEventRequest;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.request.CreateEventRequest;
 import jakarta.persistence.*;
 import lombok.Data;
 

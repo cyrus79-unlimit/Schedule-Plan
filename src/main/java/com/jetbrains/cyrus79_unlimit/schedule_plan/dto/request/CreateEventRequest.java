@@ -1,4 +1,4 @@
-package com.jetbrains.cyrus79_unlimit.schedule_plan.dto;
+package com.jetbrains.cyrus79_unlimit.schedule_plan.dto.request;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;

@@ -1,15 +1,12 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.service;
 
-import com.jetbrains.cyrus79_unlimit.schedule_plan.config.BadRequestException;
-import com.jetbrains.cyrus79_unlimit.schedule_plan.config.CustomUserDetails;
-import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.RegisterRequest;
-import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.UpdateUserRequest;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.exception.BadRequestException;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.security.CustomUserDetails;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.request.RegisterRequest;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.request.UpdateUserRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.User;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.repository.UserRepository;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.CustomAutowireConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

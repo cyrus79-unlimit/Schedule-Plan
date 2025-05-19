@@ -1,8 +1,8 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.controller;
 
-import com.jetbrains.cyrus79_unlimit.schedule_plan.config.JwtUtil;
-import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.LoginRequest;
-import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.RegisterRequest;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.security.JwtUtil;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.request.LoginRequest;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.request.RegisterRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.User;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.service.UserService;
 import jakarta.validation.Valid;

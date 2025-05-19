@@ -1,6 +1,6 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.service;
 
-import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.CreateEventRequest;
+import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.request.CreateEventRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.Event;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.entity.User;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.repository.EventRepository;

@@ -1,4 +1,4 @@
-package com.jetbrains.cyrus79_unlimit.schedule_plan.config;
+package com.jetbrains.cyrus79_unlimit.schedule_plan.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

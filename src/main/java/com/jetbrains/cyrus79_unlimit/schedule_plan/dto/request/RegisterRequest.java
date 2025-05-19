@@ -1,6 +1,5 @@
-package com.jetbrains.cyrus79_unlimit.schedule_plan.dto;
+package com.jetbrains.cyrus79_unlimit.schedule_plan.dto.request;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

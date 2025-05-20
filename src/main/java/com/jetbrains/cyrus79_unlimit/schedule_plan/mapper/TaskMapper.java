@@ -14,4 +14,11 @@ public class TaskMapper {
     public TaskDto toDto(Task task) {
         return modelMapper.map(task,TaskDto.class);
     }
+
+//    public Task toEntity(CreateTaskRequest request, User user) {
+//        Task task = modelMapper.map(request, Task.class);
+//        task.setUser(user);
+//        return task;
+//    }
+
 }

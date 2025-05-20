@@ -28,7 +28,7 @@ public class EventController {
     public ResponseEntity<List<Event>> createEvent(@RequestBody @Valid CreateEventRequest request) {
         // Set the authenticated user
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<Event> createdEvents = eventService.createEvent(request, username);
+        List<Event> createdEvents = eventService.createEvent(username, request);
         return ResponseEntity.ok(createdEvents);
     }
 

@@ -9,13 +9,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.Optional;
 
 public interface UserService {
-    Optional<User> authenticate(String username, String password);
+    Optional<User> authenticate(String email, String password);
 
-    User registerUser(RegisterRequest registerRequest);
+    void registerUser(RegisterRequest registerRequest);
+
+        boolean verifyOtp(String email, String otpCode, String password);
 
     Optional<User> getUserById(Long id);
 
-    User findByUsername(String username);
+    User findByEmail(String email);
 
     void deleteUser(Long id);
 
@@ -23,6 +25,6 @@ public interface UserService {
 
     boolean changePassword(Long id, String oldPassword, String newPassword);
 
-    UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
+    UserDetails loadUserByUsername(String email) throws UsernameNotFoundException;
 
 }

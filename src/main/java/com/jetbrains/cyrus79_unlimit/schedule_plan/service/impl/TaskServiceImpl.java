@@ -23,9 +23,9 @@ public class TaskServiceImpl implements TaskService {
     private final UserService userService;
     private final TaskMapper taskMapper;
 
-    public TaskDto createTask(String username, CreateTaskRequest createTaskRequest)
+    public TaskDto createTask(String email, CreateTaskRequest createTaskRequest)
     {
-        User user = userService.findByUsername(username);
+        User user = userService.findByEmail(email);
 
         Task newTask = new Task();
         newTask.setTitle(createTaskRequest.getTitle());
@@ -36,8 +36,8 @@ public class TaskServiceImpl implements TaskService {
         return taskMapper.toDto(taskRepository.save(newTask));
     }
 
-    public Page<TaskDto> getUserTasks(String username, Boolean completed, Pageable pageable) {
-        User user = userService.findByUsername(username);
+    public Page<TaskDto> getUserTasks(String email, Boolean completed, Pageable pageable) {
+        User user = userService.findByEmail(email);
 
         if (completed == null) {
             return taskRepository.findAllByUser_Id(user.getId(),pageable);

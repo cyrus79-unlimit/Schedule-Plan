@@ -1,9 +1,10 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.dto.request;
 
-import lombok.*;
+import lombok.Data;
 
 @Data
-public class LoginRequest {
+public class VerifyOtpRequest {
     private String email;
+    private String otpCode;
     private String password;
 }

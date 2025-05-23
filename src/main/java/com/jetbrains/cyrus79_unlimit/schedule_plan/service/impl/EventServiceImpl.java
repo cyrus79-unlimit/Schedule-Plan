@@ -24,8 +24,8 @@ public class EventServiceImpl implements EventService {
     private final UserService userService;
 
     @Override
-    public List<Event> createEvent(String username, CreateEventRequest createEventRequest) {
-        User user = userService.findByUsername(username);
+    public List<Event> createEvent(String email, CreateEventRequest createEventRequest) {
+        User user = userService.findByEmail(email);
         List<Event> events = new ArrayList<>();
 
         LocalDateTime start = createEventRequest.getStartTime();
@@ -65,8 +65,8 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Page<Event> getUserEvents(String username, Pageable pageable) {
-        User user = userService.findByUsername(username);
+    public Page<Event> getUserEvents(String email, Pageable pageable) {
+        User user = userService.findByEmail(email);
         return eventRepository.findAllByUser_Id(user.getId(),pageable);
     }
 

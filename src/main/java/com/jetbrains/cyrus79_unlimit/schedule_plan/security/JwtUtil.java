@@ -18,10 +18,10 @@ public class JwtUtil {
     }
 
     //Token generation
-    public String generateToken(String username,String role) {
+    public String generateToken(String email,String role) {
         long jwtExpirationMs = 86400000;
         return Jwts.builder()
-                .subject(username)
+                .subject(email)
                 .claim("role", role)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))

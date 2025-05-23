@@ -1,5 +1,6 @@
 package com.jetbrains.cyrus79_unlimit.schedule_plan.controller;
 
+import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.request.VerifyOtpRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.security.JwtUtil;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.request.LoginRequest;
 import com.jetbrains.cyrus79_unlimit.schedule_plan.dto.request.RegisterRequest;
@@ -9,10 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,26 +24,42 @@ public class AuthController {
 
     private final JwtUtil jwtUtil;
 
-    // Register new user
+    // Register with email and password (sent otp to mail)
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@Valid @RequestBody RegisterRequest user) {
-        return ResponseEntity.ok(userService.registerUser(user));
+    public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterRequest request) {
+        userService.registerUser(request);
+        return ResponseEntity.ok("OTP has been sent to your email. Please verify to activate your account.");
+    }
+
+    // Verify OTP to complete registration
+    @PostMapping("/verify")
+    public ResponseEntity<String> verifyOtp(@RequestBody VerifyOtpRequest request) {
+        boolean verified = userService.verifyOtp(request.getEmail(), request.getOtpCode(), request.getPassword());
+        if (verified) {
+            return ResponseEntity.ok("Email verified successfully. You can now login.");
+        } else {
+            return ResponseEntity.badRequest().body("Invalid OTP or email.");
+        }
     }
 
     // Login user
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
-        Optional<User> user = userService.authenticate(loginRequest.getUsername(), loginRequest.getPassword());
-        if (user.isPresent()) {
-            String token = jwtUtil.generateToken(
-                    user.get().getUsername(),
-                    user.get().getRole()
-            );
+        Optional<User> userOtp = userService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
+        if (userOtp.isPresent()) {
+            User user = userOtp.get();
+
+            if (!user.isEnabled()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Email not verified. Please check your email for the OTP.");
+            }
+
+            String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
 
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
-            response.put("username", user.get().getUsername());
-            response.put("role", user.get().getRole());
+            response.put("email", user.getEmail());
+            response.put("role", user.getRole());
             response.put("message", "Login successful");
 
             return ResponseEntity.ok(response);

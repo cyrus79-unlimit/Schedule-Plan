@@ -17,16 +17,16 @@ public class User {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String username;
+    private String email;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String name;
 
-    @Column(unique = true)
-    private String email;
+    @Column(nullable = false)
+    private boolean enabled = false;
 
     private LocalDate birthday;
 
